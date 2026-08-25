@@ -253,6 +253,83 @@
       }
     }
 
+  
+    /* ===== ปรับขนาดให้สม่ำเสมอทั้งมือถือและคอม ===== */
+    .field label{
+      font-size:10px !important;
+      line-height:1.2 !important;
+      font-weight:800 !important;
+    }
+    .field input,
+    .field input[readonly]{
+      font-size:12px !important;
+      line-height:1 !important;
+      font-weight:800 !important;
+    }
+    .row-copy,.row-remove{
+      font-size:16px !important;
+      line-height:1 !important;
+      padding:0 !important;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+    }
+
+    /* ให้เลข JOB กว้างขึ้น และวันที่เริ่มแสดงครบ */
+    @media(min-width:620px){
+      .fields{
+        grid-template-columns:1.35fr 1.35fr .62fr 1.2fr 40px 40px !important;
+        gap:7px !important;
+      }
+      .job{padding:12px 14px !important}
+      .field input{
+        height:40px !important;
+      }
+      .row-copy,.row-remove{
+        width:40px !important;
+        height:40px !important;
+        min-height:40px !important;
+        border-radius:10px !important;
+      }
+      input.start[type="date"]{
+        padding-right:34px !important;
+      }
+      input.start[type="date"]::-webkit-calendar-picker-indicator{
+        right:7px !important;
+      }
+    }
+
+    @media(max-width:619px){
+      .job{padding:8px 7px !important}
+      .fields{
+        grid-template-columns:minmax(86px,1.25fr) minmax(118px,1.6fr) 58px minmax(96px,1.35fr) 34px 34px !important;
+        gap:4px !important;
+      }
+      .field label{
+        font-size:8px !important;
+      }
+      .field input,
+      .field input[readonly]{
+        height:34px !important;
+        font-size:10px !important;
+        padding-left:6px !important;
+        padding-right:6px !important;
+      }
+      input.start[type="date"]{
+        padding-right:28px !important;
+      }
+      input.start[type="date"]::-webkit-calendar-picker-indicator{
+        right:5px !important;
+      }
+      .row-copy,.row-remove{
+        width:34px !important;
+        height:34px !important;
+        min-height:34px !important;
+        border-radius:8px !important;
+        font-size:14px !important;
+      }
+    }
+
   </style>
 </head>
 <body>
@@ -281,8 +358,8 @@
         <div class="field"><label>วันเริ่ม</label><div class="input-row"><input class="start" type="date"></div></div>
         <div class="field"><label>จำนวนวัน</label><div class="input-row"><input class="days" type="number" inputmode="numeric" min="1" step="1" placeholder="0"></div></div>
         <div class="field"><label>วันเสร็จ</label><div class="input-row"><input class="finish" type="text" readonly placeholder="รอข้อมูล"></div></div>
-        <button class="btn row-copy" type="button">คัดลอก</button>
-        <button class="remove row-remove" type="button" aria-label="ลบรายการ">ลบ</button>
+        <button class="btn row-copy" type="button" aria-label="คัดลอก JOB" title="คัดลอก JOB">⧉</button>
+        <button class="remove row-remove" type="button" aria-label="ลบรายการ" title="ลบรายการ">×</button>
       </div>
     </article>
   </template>
