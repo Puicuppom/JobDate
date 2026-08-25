@@ -534,6 +534,55 @@
       }
     }
 
+  
+    /* ===== ปุ่มคัดลอกแยกในแต่ละช่อง ===== */
+    .input-row{position:relative !important}
+    .field-copy{
+      position:absolute;
+      right:3px;
+      top:50%;
+      transform:translateY(-50%);
+      width:24px;
+      height:26px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      border:0;
+      border-radius:6px;
+      background:transparent;
+      color:var(--green);
+      font-size:12px;
+      font-weight:900;
+      padding:0;
+      cursor:pointer;
+    }
+    .field-copy:hover{background:#e9f2ed}
+    .job-no,.finish{padding-right:29px !important}.days{padding-right:6px !important}
+    input.start[type="date"]{padding-right:50px !important}
+    input.start[type="date"]::-webkit-calendar-picker-indicator{
+      right:27px !important;
+    }
+
+    /* ช่องต่าง ๆ ยังคงใช้ 5 คอลัมน์หลัก + ปุ่มลบ */
+    @media(max-width:619px){
+      .field-copy{width:21px;height:24px;right:2px;font-size:10px}
+      .job-no,.finish{padding-right:24px !important}.days{padding-right:5px !important}
+      input.start[type="date"]{padding-right:43px !important}
+      input.start[type="date"]::-webkit-calendar-picker-indicator{right:23px !important}
+    }
+
+  
+    /* เว้นระยะระหว่างก้อนบนกับตาราง JOB ให้สมดุลกับขอบเขียว */
+    .jobs-head{
+      margin-top:8px !important;
+    }
+
+    @media(max-width:619px){
+      .jobs-head{
+        margin-top:9px !important;
+      }
+    }
+
   </style>
 </head>
 <body>
@@ -565,10 +614,10 @@
   <template id="jobTemplate">
     <article class="job">
       <div class="fields">
-        <div class="field"><div class="input-row"><input class="job-no" type="text" inputmode="text" placeholder="เช่น JOB-2501"></div></div>
-        <div class="field"><div class="input-row"><input class="start" type="date"></div></div>
+        <div class="field"><div class="input-row"><input class="job-no" type="text" inputmode="text" placeholder="เช่น JOB-2501"><button class="field-copy" type="button" data-copy="job-no" aria-label="คัดลอกเลข JOB" title="คัดลอก">⧉</button></div></div>
+        <div class="field"><div class="input-row"><input class="start" type="date"><button class="field-copy" type="button" data-copy="start" aria-label="คัดลอกวันเริ่ม" title="คัดลอก">⧉</button></div></div>
         <div class="field"><div class="input-row"><input class="days" type="number" inputmode="numeric" min="1" step="1" placeholder="0"></div></div>
-        <div class="field"><div class="input-row"><input class="finish" type="text" readonly placeholder="รอข้อมูล"></div></div>
+        <div class="field"><div class="input-row"><input class="finish" type="text" readonly placeholder="รอข้อมูล"><button class="field-copy" type="button" data-copy="finish" aria-label="คัดลอกวันเสร็จ" title="คัดลอก">⧉</button></div></div>
         
         <button class="remove row-remove" type="button" aria-label="ลบรายการ" title="ลบรายการ">×</button>
       </div>
@@ -579,7 +628,7 @@
     const pad=n=>String(n).padStart(2,'0');
     const dateText=value=>{if(!value)return '';const [y,m,d]=value.split('-').map(Number);return `${pad(d)}/${pad(m)}/${y}`};
     const finishDate=(start,days)=>{if(!start||!days||days<1)return '';const [y,m,d]=start.split('-').map(Number),dt=new Date(y,m-1,d);dt.setDate(dt.getDate()+Number(days)-(countStart.checked?1:0));return `${pad(dt.getDate())}/${pad(dt.getMonth()+1)}/${dt.getFullYear()}`};
-    function flash(msg){toast.textContent=msg;toast.classList.add('show');clearTimeout(flash.t);flash.t=setTimeout(()=>toast.classList.remove('show'),1600)}
+    let toastTimer=null;function flash(msg){clearTimeout(toastTimer);toast.classList.remove('show');toast.textContent=msg;requestAnimationFrame(()=>{toast.classList.add('show');toastTimer=setTimeout(()=>toast.classList.remove('show'),1200)})}
     async function copy(text){if(!text)return flash('ยังไม่มีข้อมูลให้คัดลอก');try{await navigator.clipboard.writeText(text)}catch{const t=document.createElement('textarea');t.value=text;document.body.append(t);t.select();document.execCommand('copy');t.remove()}flash('คัดลอกแล้ว')}
     function data(){return [...document.querySelectorAll('.job')].map(el=>({job:el.querySelector('.job-no').value,start:el.querySelector('.start').value,days:el.querySelector('.days').value}))}
     function save(){localStorage.setItem('job-planner-v1',JSON.stringify({countStart:countStart.checked,allDays:allDays.value,jobs:data()}))}
@@ -589,7 +638,13 @@
     function addJob(values={}){const el=tpl.content.firstElementChild.cloneNode(true);el.querySelector('.job-no').value=values.job||'';el.querySelector('.start').value=values.start||'';el.querySelector('.days').value=values.days||'';
       el.addEventListener('input',()=>{recalc(el);save()});
       const removeBtn=el.querySelector('.remove'); if(removeBtn) removeBtn.onclick=()=>{el.remove();renumber();save()};
-      ['job-no','start','finish'].forEach(cls=>{const input=el.querySelector('.'+cls);if(input)input.addEventListener('click',()=>copy(cls==='start'?dateText(input.value):input.value))});
+      el.querySelectorAll('.field-copy').forEach(btn=>{
+        btn.onclick=(e)=>{
+          e.preventDefault();e.stopPropagation();
+          const cls=btn.dataset.copy,input=el.querySelector('.'+cls);
+          copy(cls==='start'?dateText(input.value):input.value);
+        };
+      });
       jobsEl.append(el);recalc(el);renumber();save();return el}
     document.querySelector('#addJob').onclick=()=>{const el=addJob();el.querySelector('.job-no').focus()};
     document.querySelector('#copyAll').onclick=()=>{const rows=[...document.querySelectorAll('.job')];copy(rows.map(rowText).join('\n\n'))};
