@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#12392f">
+  <title>คำนวณวันเสร็จงาน</title>
+  <style>
+    :root{--ink:#17352e;--muted:#667b75;--paper:#f5f1e8;--card:#fffdf8;--line:#dce2dc;--green:#176b55;--green2:#0f5946;--orange:#e58645;--danger:#b94343;--shadow:0 10px 30px rgba(20,54,45,.09)}
+    *{box-sizing:border-box} html{background:#12392f} body{margin:0;min-height:100vh;font-family:"Noto Sans Thai","Leelawadee UI",Tahoma,sans-serif;color:var(--ink);background:linear-gradient(180deg,#12392f 0 230px,var(--paper) 230px);padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom)}
+    button,input{font:inherit} button{cursor:pointer} .wrap{width:min(100%,760px);margin:auto;padding:24px 14px 44px}
+    header{color:#fff;padding:12px 6px 23px} .eyebrow{margin:0 0 6px;color:#a8d4c4;font-size:12px;font-weight:800;letter-spacing:.14em;text-transform:uppercase} h1{font-size:clamp(26px,8vw,40px);line-height:1.12;margin:0 0 8px} header p{margin:0;color:#d2e2dc;font-size:14px}
+    .toolbar,.job{background:var(--card);border:1px solid rgba(255,255,255,.7);box-shadow:var(--shadow);border-radius:20px}.toolbar{padding:14px;margin-bottom:12px;display:grid;gap:10px}.settings{display:flex;align-items:center;gap:10px;font-size:13px;color:var(--muted)}
+    .switch{position:relative;width:44px;height:26px;flex:none}.switch input{opacity:0;width:0;height:0}.slider{position:absolute;inset:0;border-radius:20px;background:#bcc8c3;transition:.2s}.slider:before{content:"";position:absolute;width:20px;height:20px;left:3px;top:3px;border-radius:50%;background:white;transition:.2s;box-shadow:0 1px 4px #0003}.switch input:checked+.slider{background:var(--green)}.switch input:checked+.slider:before{transform:translateX(18px)}
+    .actions{display:grid;grid-template-columns:1fr 1fr;gap:8px}.btn{border:0;border-radius:12px;min-height:45px;padding:9px 12px;font-weight:800}.btn-primary{background:var(--green);color:#fff}.btn-primary:active{background:var(--green2)}.btn-soft{background:#e6eee9;color:var(--green2)}.btn-danger{background:#fff0ed;color:var(--danger)}
+    #jobs{display:grid;gap:12px}.job{padding:15px}.job-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:13px}.job-title{font-weight:900;font-size:15px}.remove{border:0;background:transparent;color:#8a9a95;padding:7px;border-radius:9px}.remove:hover{background:#f2eee7;color:var(--danger)}
+    .fields{display:grid;gap:11px}.field label{display:block;color:var(--muted);font-size:12px;font-weight:800;margin:0 0 5px}.input-row{display:flex;gap:6px}.field input{width:100%;height:48px;border:1px solid var(--line);background:#fff;border-radius:12px;padding:0 12px;color:var(--ink);outline:none;font-weight:700}.field input:focus{border-color:var(--green);box-shadow:0 0 0 3px rgba(23,107,85,.12)}.field input[readonly]{background:#edf5f0;color:var(--green2);font-size:16px}.copy{width:48px;height:48px;flex:none;border:1px solid var(--line);background:#fff;border-radius:12px;color:var(--green);font-size:18px}.copy:active{background:#e8f2ed}.row-copy{margin-top:12px;width:100%;background:#f0eee8;color:#486159}
+    .empty{display:none;text-align:center;padding:35px 15px;color:var(--muted)}.empty.show{display:block}.note{font-size:12px;line-height:1.5;color:var(--muted);padding:14px 4px;text-align:center}.toast{position:fixed;left:50%;bottom:calc(22px + env(safe-area-inset-bottom));transform:translate(-50%,18px);background:#17352e;color:#fff;padding:11px 17px;border-radius:999px;font-size:13px;font-weight:700;opacity:0;pointer-events:none;transition:.2s;box-shadow:0 8px 25px #0003;white-space:nowrap}.toast.show{opacity:1;transform:translate(-50%,0)}
+    @media(min-width:620px){.toolbar{grid-template-columns:1fr auto;align-items:center}.actions{grid-template-columns:auto auto}.fields{grid-template-columns:1.15fr 1fr .7fr 1.15fr}.job{padding:18px}.row-copy{width:auto;float:right}}
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <header><p class="eyebrow">JOB PLANNER</p><h1>คำนวณวันเสร็จงาน</h1><p>วางแผนหลายงาน แล้วคัดลอกข้อมูลไปใช้ต่อได้ทันที</p></header>
+    <section class="toolbar">
+      <label class="settings"><span class="switch"><input id="countStart" type="checkbox" checked><span class="slider"></span></span><span>นับวันที่เริ่มเป็นวันที่ 1</span></label>
+      <div class="actions"><button class="btn btn-primary" id="addJob">＋ เพิ่ม JOB</button><button class="btn btn-soft" id="copyAll">คัดลอกทั้งหมด</button></div>
+    </section>
+    <section id="jobs" aria-live="polite"></section>
+    <div id="empty" class="empty">ยังไม่มีรายการ กด “เพิ่ม JOB” เพื่อเริ่มต้น</div>
+    <p class="note">คำนวณตามวันปฏิทิน รวมวันเสาร์–อาทิตย์<br>ข้อมูลจะถูกบันทึกไว้เฉพาะในอุปกรณ์นี้</p>
+  </main>
+  <div class="toast" id="toast" role="status"></div>
+  <template id="jobTemplate">
+    <article class="job">
+      <div class="job-head"><span class="job-title">JOB 1</span><button class="remove" aria-label="ลบรายการ">ลบรายการ</button></div>
+      <div class="fields">
+        <div class="field"><label>เลข JOB</label><div class="input-row"><input class="job-no" type="text" inputmode="text" placeholder="เช่น JOB-2501"><button class="copy" data-copy="job-no" aria-label="คัดลอกเลข JOB">⧉</button></div></div>
+        <div class="field"><label>วันที่เริ่มงาน</label><div class="input-row"><input class="start" type="date"><button class="copy" data-copy="start" aria-label="คัดลอกวันที่เริ่มงาน">⧉</button></div></div>
+        <div class="field"><label>จำนวนวันที่ทำ</label><div class="input-row"><input class="days" type="number" inputmode="numeric" min="1" step="1" placeholder="0"><button class="copy" data-copy="days" aria-label="คัดลอกจำนวนวัน">⧉</button></div></div>
+        <div class="field"><label>กำหนดเสร็จ</label><div class="input-row"><input class="finish" type="text" readonly placeholder="รอข้อมูล"><button class="copy" data-copy="finish" aria-label="คัดลอกกำหนดเสร็จ">⧉</button></div></div>
+      </div>
+      <button class="btn row-copy">คัดลอก JOB นี้</button>
+    </article>
+  </template>
+  <script>
+    const jobsEl=document.querySelector('#jobs'),tpl=document.querySelector('#jobTemplate'),toast=document.querySelector('#toast'),countStart=document.querySelector('#countStart');
+    const pad=n=>String(n).padStart(2,'0');
+    const dateText=value=>{if(!value)return '';const [y,m,d]=value.split('-').map(Number);return `${pad(d)}/${pad(m)}/${y}`};
+    const finishDate=(start,days)=>{if(!start||!days||days<1)return '';const [y,m,d]=start.split('-').map(Number),dt=new Date(y,m-1,d);dt.setDate(dt.getDate()+Number(days)-(countStart.checked?1:0));return `${pad(dt.getDate())}/${pad(dt.getMonth()+1)}/${dt.getFullYear()}`};
+    function flash(msg){toast.textContent=msg;toast.classList.add('show');clearTimeout(flash.t);flash.t=setTimeout(()=>toast.classList.remove('show'),1600)}
+    async function copy(text){if(!text)return flash('ยังไม่มีข้อมูลให้คัดลอก');try{await navigator.clipboard.writeText(text)}catch{const t=document.createElement('textarea');t.value=text;document.body.append(t);t.select();document.execCommand('copy');t.remove()}flash('คัดลอกแล้ว')}
+    function data(){return [...document.querySelectorAll('.job')].map(el=>({job:el.querySelector('.job-no').value,start:el.querySelector('.start').value,days:el.querySelector('.days').value}))}
+    function save(){localStorage.setItem('job-planner-v1',JSON.stringify({countStart:countStart.checked,jobs:data()}))}
+    function recalc(el){el.querySelector('.finish').value=finishDate(el.querySelector('.start').value,el.querySelector('.days').value)}
+    function renumber(){[...document.querySelectorAll('.job-title')].forEach((x,i)=>x.textContent=`JOB ${i+1}`);document.querySelector('#empty').classList.toggle('show',!jobsEl.children.length)}
+    function rowText(el){const j=el.querySelector('.job-no').value||'-',s=dateText(el.querySelector('.start').value)||'-',d=el.querySelector('.days').value||'-',f=el.querySelector('.finish').value||'-';return `เลข JOB: ${j}\nวันที่เริ่มงาน: ${s}\nจำนวนวันที่ทำ: ${d} วัน\nกำหนดเสร็จ: ${f}`}
+    function addJob(values={}){const el=tpl.content.firstElementChild.cloneNode(true);el.querySelector('.job-no').value=values.job||'';el.querySelector('.start').value=values.start||'';el.querySelector('.days').value=values.days||'';
+      el.addEventListener('input',()=>{recalc(el);save()});el.querySelector('.remove').onclick=()=>{el.remove();renumber();save()};el.querySelector('.row-copy').onclick=()=>copy(rowText(el));el.querySelectorAll('[data-copy]').forEach(b=>b.onclick=()=>{const cls=b.dataset.copy,input=el.querySelector('.'+cls);copy(cls==='start'?dateText(input.value):input.value)});jobsEl.append(el);recalc(el);renumber();save();return el}
+    document.querySelector('#addJob').onclick=()=>{const el=addJob();el.querySelector('.job-no').focus()};
+    document.querySelector('#copyAll').onclick=()=>{const rows=[...document.querySelectorAll('.job')];copy(rows.map(rowText).join('\n\n'))};
+    countStart.onchange=()=>{document.querySelectorAll('.job').forEach(recalc);save()};
+    try{const old=JSON.parse(localStorage.getItem('job-planner-v1'));if(old){countStart.checked=old.countStart!==false;(old.jobs||[]).forEach(addJob)}}catch{}
+    if(!jobsEl.children.length)addJob({start:new Date().toLocaleDateString('en-CA')});
+  </script>
+</body>
+</html>
