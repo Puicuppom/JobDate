@@ -330,6 +330,210 @@
       }
     }
 
+  
+    /* ===== Compact layout: ให้ข้อมูลแสดงครบโดยไม่ล้น ===== */
+    .field label{
+      font-size:8px !important;
+      line-height:1.15 !important;
+      font-weight:800 !important;
+    }
+    .field input,
+    .field input[readonly]{
+      font-size:10px !important;
+      line-height:1 !important;
+      font-weight:800 !important;
+    }
+
+    @media(min-width:620px){
+      .fields{
+        grid-template-columns:1.45fr 1.55fr .62fr 1.35fr 36px 36px !important;
+        gap:6px !important;
+      }
+      .field input,
+      .field input[readonly]{
+        height:38px !important;
+        font-size:10px !important;
+        padding-left:7px !important;
+        padding-right:7px !important;
+      }
+      input.start[type="date"]{
+        padding-right:30px !important;
+      }
+      .row-copy,.row-remove{
+        width:36px !important;
+        height:38px !important;
+        min-height:38px !important;
+        font-size:14px !important;
+      }
+    }
+
+    @media(max-width:619px){
+      .wrap{max-width:430px !important}
+      .job{padding:7px 6px !important}
+      .fields{
+        grid-template-columns:minmax(92px,1.35fr) minmax(122px,1.75fr) 54px minmax(96px,1.4fr) 30px 30px !important;
+        gap:3px !important;
+      }
+      .field label{
+        font-size:6.5px !important;
+        margin:0 0 2px 1px !important;
+      }
+      .field input,
+      .field input[readonly]{
+        height:32px !important;
+        font-size:8px !important;
+        padding-left:5px !important;
+        padding-right:5px !important;
+        border-radius:7px !important;
+      }
+      input.start[type="date"]{
+        font-size:8px !important;
+        padding-right:24px !important;
+      }
+      input.start[type="date"]::-webkit-calendar-picker-indicator{
+        right:3px !important;
+        width:12px;
+        height:12px;
+      }
+      .row-copy,.row-remove{
+        width:30px !important;
+        height:32px !important;
+        min-height:32px !important;
+        font-size:12px !important;
+        border-radius:7px !important;
+      }
+    }
+
+  
+    /* ===== ตาราง JOB: มีหัวคอลัมน์ครั้งเดียว ===== */
+    .jobs-head{
+      display:grid;
+      grid-template-columns:1.42fr 1.72fr .72fr 1.38fr 30px 30px;
+      gap:4px;
+      align-items:end;
+      padding:0 7px 4px;
+      color:var(--muted);
+      font-size:8px;
+      font-weight:900;
+      line-height:1.1;
+    }
+
+    #jobs{gap:5px !important}
+    .job{
+      padding:6px !important;
+      border-radius:10px !important;
+    }
+    .fields{
+      grid-template-columns:1.42fr 1.72fr .72fr 1.38fr 30px 30px !important;
+      gap:4px !important;
+      align-items:center !important;
+    }
+    .field label{display:none !important}
+    .field input,
+    .field input[readonly]{
+      height:32px !important;
+      min-width:0 !important;
+      font-size:9px !important;
+      line-height:1 !important;
+      padding:0 6px !important;
+      border-radius:7px !important;
+    }
+    input.start[type="date"]{
+      padding-right:25px !important;
+    }
+    input.start[type="date"]::-webkit-calendar-picker-indicator{
+      right:4px !important;
+      width:12px !important;
+      height:12px !important;
+    }
+    .row-copy,.row-remove{
+      width:30px !important;
+      height:32px !important;
+      min-height:32px !important;
+      border-radius:7px !important;
+      font-size:13px !important;
+      padding:0 !important;
+    }
+
+    @media(min-width:620px){
+      .jobs-head,
+      .fields{
+        grid-template-columns:1.45fr 1.65fr .68fr 1.35fr 34px 34px !important;
+        gap:6px !important;
+      }
+      .jobs-head{
+        padding:0 10px 5px;
+        font-size:9px;
+      }
+      .job{padding:8px 9px !important}
+      .field input,
+      .field input[readonly]{
+        height:36px !important;
+        font-size:10px !important;
+        padding:0 8px !important;
+      }
+      input.start[type="date"]{padding-right:30px !important}
+      .row-copy,.row-remove{
+        width:34px !important;
+        height:36px !important;
+        min-height:36px !important;
+        font-size:14px !important;
+      }
+    }
+
+    @media(max-width:390px){
+      .jobs-head,
+      .fields{
+        grid-template-columns:1.48fr 1.78fr .66fr 1.36fr 27px 27px !important;
+        gap:3px !important;
+      }
+      .jobs-head{
+        padding:0 5px 3px;
+        font-size:6.5px !important;
+      }
+      .job{padding:5px !important}
+      .field input,
+      .field input[readonly]{
+        height:30px !important;
+        font-size:7.5px !important;
+        padding:0 4px !important;
+      }
+      input.start[type="date"]{
+        padding-right:22px !important;
+      }
+      .row-copy,.row-remove{
+        width:27px !important;
+        height:30px !important;
+        min-height:30px !important;
+        font-size:12px !important;
+      }
+    }
+
+  
+    /* ===== ไม่มีปุ่มคัดลอกราย JOB ===== */
+    .jobs-head,
+    .fields{
+      grid-template-columns:1.55fr 1.85fr .72fr 1.55fr 32px !important;
+    }
+    .jobs-head{
+      position:relative;
+      z-index:2;
+      background:var(--paper);
+      padding-top:5px !important;
+    }
+    @media(min-width:620px){
+      .jobs-head,
+      .fields{
+        grid-template-columns:1.55fr 1.75fr .68fr 1.45fr 36px !important;
+      }
+    }
+    @media(max-width:390px){
+      .jobs-head,
+      .fields{
+        grid-template-columns:1.55fr 1.9fr .68fr 1.48fr 28px !important;
+      }
+    }
+
   </style>
 </head>
 <body>
@@ -346,6 +550,13 @@
       </div>
       <div class="actions"><button class="btn btn-primary" id="addJob">＋ เพิ่ม JOB</button><button class="btn btn-soft" id="copyAll">คัดลอกทั้งหมด</button></div>
     </section>
+    <div class="jobs-head" aria-hidden="true">
+      <span>เลข JOB</span>
+      <span>วันเริ่ม</span>
+      <span>จำนวนวัน</span>
+      <span>วันเสร็จ</span>
+      <span></span>
+    </div>
     <section id="jobs" aria-live="polite"></section>
     <div id="empty" class="empty">ยังไม่มีรายการ กด “เพิ่ม JOB” เพื่อเริ่มต้น</div>
     <p class="note">คำนวณตามวันปฏิทิน รวมวันเสาร์–อาทิตย์<br>ข้อมูลจะถูกบันทึกไว้เฉพาะในอุปกรณ์นี้</p>
@@ -354,11 +565,11 @@
   <template id="jobTemplate">
     <article class="job">
       <div class="fields">
-        <div class="field"><label>เลข JOB</label><div class="input-row"><input class="job-no" type="text" inputmode="text" placeholder="เช่น JOB-2501"></div></div>
-        <div class="field"><label>วันเริ่ม</label><div class="input-row"><input class="start" type="date"></div></div>
-        <div class="field"><label>จำนวนวัน</label><div class="input-row"><input class="days" type="number" inputmode="numeric" min="1" step="1" placeholder="0"></div></div>
-        <div class="field"><label>วันเสร็จ</label><div class="input-row"><input class="finish" type="text" readonly placeholder="รอข้อมูล"></div></div>
-        <button class="btn row-copy" type="button" aria-label="คัดลอก JOB" title="คัดลอก JOB">⧉</button>
+        <div class="field"><div class="input-row"><input class="job-no" type="text" inputmode="text" placeholder="เช่น JOB-2501"></div></div>
+        <div class="field"><div class="input-row"><input class="start" type="date"></div></div>
+        <div class="field"><div class="input-row"><input class="days" type="number" inputmode="numeric" min="1" step="1" placeholder="0"></div></div>
+        <div class="field"><div class="input-row"><input class="finish" type="text" readonly placeholder="รอข้อมูล"></div></div>
+        
         <button class="remove row-remove" type="button" aria-label="ลบรายการ" title="ลบรายการ">×</button>
       </div>
     </article>
@@ -378,7 +589,6 @@
     function addJob(values={}){const el=tpl.content.firstElementChild.cloneNode(true);el.querySelector('.job-no').value=values.job||'';el.querySelector('.start').value=values.start||'';el.querySelector('.days').value=values.days||'';
       el.addEventListener('input',()=>{recalc(el);save()});
       const removeBtn=el.querySelector('.remove'); if(removeBtn) removeBtn.onclick=()=>{el.remove();renumber();save()};
-      const rowCopyBtn=el.querySelector('.row-copy'); if(rowCopyBtn) rowCopyBtn.onclick=()=>copy(rowText(el));
       ['job-no','start','finish'].forEach(cls=>{const input=el.querySelector('.'+cls);if(input)input.addEventListener('click',()=>copy(cls==='start'?dateText(input.value):input.value))});
       jobsEl.append(el);recalc(el);renumber();save();return el}
     document.querySelector('#addJob').onclick=()=>{const el=addJob();el.querySelector('.job-no').focus()};
