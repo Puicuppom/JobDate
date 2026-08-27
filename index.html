@@ -902,6 +902,37 @@
       .job.is-done{border-left:6px solid #08734f !important;padding-left:1px !important}
     }
   </style>
+  <style>
+    /* ขยายช่องเลือกวันที่ให้ Android แสดงวันที่ครบ */
+    @media(max-width:619px){
+      .jobs-head,.fields{
+        grid-template-columns:24px 92px 30px minmax(0,1fr) 30px minmax(0,1fr) 26px !important;
+        gap:2px !important;
+      }
+      .done-check{width:19px;height:19px}
+      .row-remove{width:26px !important}
+      input.start[type="date"]{
+        width:100% !important;
+        min-width:0 !important;
+        padding-left:5px !important;
+        padding-right:19px !important;
+        font-size:8px !important;
+      }
+      input.start[type="date"]::-webkit-calendar-picker-indicator{
+        right:2px !important;
+        width:12px !important;
+        height:12px !important;
+      }
+    }
+    @media(max-width:360px){
+      .jobs-head,.fields{
+        grid-template-columns:23px 86px 29px minmax(0,1fr) 29px minmax(0,1fr) 25px !important;
+        gap:2px !important;
+      }
+      .field input,.field input[readonly]{font-size:7.5px !important}
+      .row-remove{width:25px !important}
+    }
+  </style>
 </head>
 <body>
   <main class="wrap">
