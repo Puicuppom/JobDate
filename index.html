@@ -4,6 +4,12 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#12392f">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="วางแผนงาน">
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" type="image/png" sizes="192x192" href="app-icon-192.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
   <title>คำนวณวันเสร็จงาน</title>
   <style>
     :root{--ink:#17352e;--muted:#667b75;--paper:#f5f1e8;--card:#fffdf8;--line:#dce2dc;--green:#176b55;--green2:#0f5946;--orange:#e58645;--danger:#b94343;--shadow:0 10px 30px rgba(20,54,45,.09)}
@@ -933,6 +939,34 @@
       .row-remove{width:25px !important}
     }
   </style>
+  <style>
+    /* แสดงวันที่แบบสั้น แต่ยังใช้ date picker ของเครื่อง */
+    .start-row{position:relative !important}
+    .start-display{padding-right:24px !important;pointer-events:none}
+    input.start[type="date"]{
+      position:absolute !important;
+      inset:0 !important;
+      width:100% !important;
+      height:100% !important;
+      opacity:0 !important;
+      cursor:pointer !important;
+      z-index:2;
+    }
+    .start-calendar{
+      position:absolute;
+      right:7px;
+      top:50%;
+      transform:translateY(-50%);
+      color:#486159;
+      font-size:12px;
+      pointer-events:none;
+      z-index:1;
+    }
+    @media(max-width:619px){
+      .start-display{font-size:8.5px !important;padding:0 20px 0 5px !important}
+      .start-calendar{right:5px;font-size:10px}
+    }
+  </style>
 </head>
 <body>
   <main class="wrap">
@@ -966,7 +1000,7 @@
     <article class="job">
       <div class="fields">
         <div class="done-wrap"><input class="done-check" type="checkbox" aria-label="ทำงานนี้เสร็จแล้ว" title="ทำแล้ว"></div>
-        <div class="field"><span class="field-name">วันเริ่ม</span><div class="input-row"><input class="start" type="date"></div></div>
+        <div class="field"><span class="field-name">วันเริ่ม</span><div class="input-row start-row"><input class="start-display" type="text" readonly placeholder="วว/ดด/ปป"><span class="start-calendar">▾</span><input class="start" type="date" aria-label="เลือกวันเริ่ม"></div></div>
         <div class="field"><span class="field-name">จำนวนวัน 1</span><div class="input-row"><input class="days-1" type="number" inputmode="numeric" min="1" step="1" placeholder="0"></div></div>
         <div class="field"><span class="field-name">เสร็จ 1</span><div class="input-row"><input class="finish-1" type="text" readonly placeholder="รอข้อมูล"></div></div>
         <div class="field"><span class="field-name">จำนวนวัน 2</span><div class="input-row"><input class="days-2" type="number" inputmode="numeric" min="1" step="1" placeholder="0"></div></div>
@@ -980,18 +1014,25 @@
     const jobsEl=document.querySelector('#jobs'),tpl=document.querySelector('#jobTemplate'),toast=document.querySelector('#toast'),countStart=document.querySelector('#countStart'),allDays1=document.querySelector('#allDays1'),allDays2=document.querySelector('#allDays2');
     const pad=n=>String(n).padStart(2,'0');
     const dateText=value=>{if(!value)return '';const [y,m,d]=value.split('-').map(Number);return `${pad(d)}/${pad(m)}/${y}`};
+    const shortDateText=value=>{if(!value)return '';const [y,m,d]=value.split('-').map(Number);return `${pad(d)}/${pad(m)}/${String(y).slice(-2)}`};
     const finishDate=(start,days)=>{if(!start||!days||days<1)return '';const [y,m,d]=start.split('-').map(Number),dt=new Date(y,m-1,d);dt.setDate(dt.getDate()+Number(days)-(countStart.checked?1:0));return `${pad(dt.getDate())}/${pad(dt.getMonth()+1)}/${dt.getFullYear()}`};
     let toastTimer=null;function flash(msg){clearTimeout(toastTimer);toast.classList.remove('show');toast.textContent=msg;requestAnimationFrame(()=>{toast.classList.add('show');toastTimer=setTimeout(()=>toast.classList.remove('show'),1200)})}
     function data(){return [...document.querySelectorAll('.job')].map(el=>({start:el.querySelector('.start').value,days1:el.querySelector('.days-1').value,days2:el.querySelector('.days-2').value,done:el.querySelector('.done-check').checked}))}
     function save(){localStorage.setItem('job-planner-v1',JSON.stringify({countStart:countStart.checked,allDays1:allDays1.value,allDays2:allDays2.value,jobs:data()}))}
     function recalc(el){
       const start=el.querySelector('.start').value,days1=Number(el.querySelector('.days-1').value),days2=Number(el.querySelector('.days-2').value);
+      el.querySelector('.start-display').value=shortDateText(start);
       el.querySelector('.finish-1').value=finishDate(start,days1);
       el.querySelector('.finish-2').value=start&&days1>0&&days2>0?finishDate(start,days1+days2):'';
     }
     function renumber(){document.querySelector('#empty').classList.toggle('show',!jobsEl.children.length)}
     function addJob(values={}){const el=tpl.content.firstElementChild.cloneNode(true);el.querySelector('.start').value=values.start||'';el.querySelector('.days-1').value=values.days1||values.days||'';el.querySelector('.days-2').value=values.days2||'';el.querySelector('.done-check').checked=values.done===true;el.classList.toggle('is-done',values.done===true);
       el.addEventListener('input',()=>{recalc(el);save()});
+      const startInput=el.querySelector('.start');
+      el.querySelector('.start-row').addEventListener('click',e=>{
+        e.preventDefault();
+        try{if(typeof startInput.showPicker==='function')startInput.showPicker();else startInput.focus()}catch{startInput.focus()}
+      });
       el.querySelector('.done-check').addEventListener('change',e=>{el.classList.toggle('is-done',e.target.checked);save()});
       const removeBtn=el.querySelector('.remove'); if(removeBtn) removeBtn.onclick=()=>{el.remove();renumber();save()};
       jobsEl.append(el);recalc(el);renumber();save();return el}
@@ -1007,6 +1048,7 @@
     countStart.onchange=()=>{document.querySelectorAll('.job').forEach(recalc);save()};
     try{const old=JSON.parse(localStorage.getItem('job-planner-v1'));if(old){countStart.checked=old.countStart!==false;allDays1.value=old.allDays1||old.allDays||'';allDays2.value=old.allDays2||'';(old.jobs||[]).forEach(addJob)}}catch{}
     if(!jobsEl.children.length)addJob({start:new Date().toLocaleDateString('en-CA')});
+    if('serviceWorker' in navigator)window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}));
   </script>
 </body>
 </html>
