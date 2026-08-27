@@ -584,80 +584,370 @@
     }
 
   </style>
+  <style>
+    /* รูปแบบใหม่: เริ่ม → เสร็จ 1 → เสร็จ 2 (ไม่ใช้เลข JOB) */
+    .jobs-head,
+    .fields{
+      grid-template-columns:1.45fr .65fr 1.25fr .65fr 1.25fr 32px !important;
+    }
+    @media(min-width:620px){
+      .jobs-head,
+      .fields{
+        grid-template-columns:1.5fr .62fr 1.25fr .62fr 1.25fr 36px !important;
+      }
+    }
+    @media(max-width:390px){
+      .jobs-head,
+      .fields{
+        grid-template-columns:1.45fr .62fr 1.2fr .62fr 1.2fr 28px !important;
+      }
+    }
+    .finish-1,.finish-2{padding-right:29px !important}
+    @media(max-width:619px){.finish-1,.finish-2{padding-right:24px !important}}
+  </style>
+  <style>
+    /* ===== Mobile-first usability refresh ===== */
+    .period-settings{display:grid;grid-template-columns:1fr 1fr auto;gap:8px;align-items:end;margin-top:10px}
+    .period-setting label{display:block;margin:0 0 4px;color:var(--muted);font-size:10px;font-weight:900}
+    .period-setting input{width:100%;height:40px;border:1px solid var(--line);background:#fff;border-radius:10px;padding:0 10px;color:var(--ink);outline:none;font-size:13px;font-weight:800}
+    .period-setting input:focus{border-color:var(--green);box-shadow:0 0 0 3px rgba(23,107,85,.12)}
+    .btn-clear{background:#fff0ed;color:var(--danger);border:1px solid #f1d7d2}
+    .btn-clear:hover{background:#ffe5e0}
+    .field-name{display:none}
+    @media(max-width:619px){
+      body{background:linear-gradient(180deg,#12392f 0 150px,var(--paper) 150px)}
+      .wrap{max-width:520px !important;padding:8px 8px 24px !important}
+      header{padding:5px 4px 12px}
+      header p:last-child{font-size:10px}
+      .toolbar{padding:10px;border-radius:14px;gap:9px}
+      .period-settings{grid-template-columns:1fr 1fr;gap:7px;margin-top:9px}
+      .period-settings .btn{grid-column:1/-1;height:38px}
+      .period-setting label{font-size:9px}
+      .period-setting input{height:38px;font-size:13px}
+      .actions{grid-template-columns:1fr 1fr 1fr;gap:6px}
+      .actions .btn{min-height:38px;font-size:9px;border-radius:9px}
+      .jobs-head{display:none !important}
+      #jobs{gap:9px !important;margin-top:10px}
+      .job{padding:10px !important;border-radius:14px !important;box-shadow:0 5px 18px rgba(20,54,45,.08)}
+      .fields{display:grid !important;grid-template-columns:1fr 1fr 34px !important;gap:8px 7px !important;align-items:end !important}
+      .field{min-width:0}
+      .field:nth-child(1){grid-column:1/3}
+      .field:nth-child(2){grid-column:1/2}
+      .field:nth-child(3){grid-column:2/3}
+      .field:nth-child(4){grid-column:1/2}
+      .field:nth-child(5){grid-column:2/3}
+      .row-remove{grid-column:3;grid-row:1;width:34px !important;height:38px !important;align-self:end}
+      .field-name{display:block;color:#6a7e77;font-size:9px;font-weight:900;margin:0 0 4px 2px}
+      .field input,.field input[readonly]{height:38px !important;font-size:11px !important;border-radius:9px !important}
+      input.start[type="date"]{padding-right:46px !important}
+      input.start[type="date"]::-webkit-calendar-picker-indicator{right:25px !important;width:15px !important;height:15px !important}
+      .field-copy{width:25px;height:30px;font-size:12px}
+      .finish-1,.finish-2{padding-right:28px !important}
+      .note{font-size:8px;padding-top:12px}
+    }
+  </style>
+  <style>
+    /* ===== One job per row + completion checkbox ===== */
+    .jobs-head,.fields{grid-template-columns:34px 1.45fr .62fr 1.2fr .62fr 1.2fr 32px !important}
+    .done-wrap{display:flex;align-items:center;justify-content:center}
+    .done-check{appearance:none;width:22px;height:22px;border:2px solid #b9c9c2;border-radius:7px;background:#fff;cursor:pointer;display:grid;place-items:center;margin:0}
+    .done-check:checked{background:var(--green);border-color:var(--green)}
+    .done-check:checked:after{content:"✓";color:#fff;font-size:14px;font-weight:900;line-height:1}
+    .job.is-done{background:#edf5f0;border-color:#cfe0d8;opacity:.76}
+    .job.is-done .field input{text-decoration:line-through;color:#60746d}
+    .job.is-done .finish-1,.job.is-done .finish-2{color:#176b55}
+    @media(min-width:620px){.jobs-head,.fields{grid-template-columns:38px 1.5fr .62fr 1.25fr .62fr 1.25fr 36px !important}}
+    @media(max-width:619px){
+      .actions{grid-template-columns:1fr 1fr !important}
+      .jobs-head{display:grid !important;grid-template-columns:26px 78px 34px 68px 34px 68px 28px !important;gap:4px !important;min-width:360px;padding:0 6px 5px !important;margin-top:10px !important;background:transparent;font-size:6.5px !important}
+      #jobs{min-width:360px;margin-top:0 !important}
+      .job{padding:6px !important;border-radius:10px !important}
+      .fields{display:grid !important;grid-template-columns:26px 78px 34px 68px 34px 68px 28px !important;gap:4px !important;align-items:center !important}
+      .done-wrap,.field:nth-child(2),.field:nth-child(3),.field:nth-child(4),.field:nth-child(5),.field:nth-child(6),.row-remove{grid-column:auto !important;grid-row:auto !important}
+      .field-name{display:none !important}
+      .field input,.field input[readonly]{height:34px !important;min-width:0 !important;font-size:8px !important;padding:0 4px !important;border-radius:7px !important}
+      input.start[type="date"]{padding-right:20px !important}
+      input.start[type="date"]::-webkit-calendar-picker-indicator{right:2px !important;width:11px !important;height:11px !important}
+      .finish-1,.finish-2{padding-right:4px !important}
+      .row-remove{width:28px !important;height:34px !important;min-height:34px !important}
+      .done-check{width:20px;height:20px;border-radius:6px}
+    }
+    @media(max-width:399px){.wrap{overflow-x:auto !important}}
+  </style>
+  <style>
+    /* ===== Compact responsive header / controls ===== */
+    header{padding:3px 4px 8px}
+    header .eyebrow{margin-bottom:1px}
+    header h1{margin-bottom:2px}
+    .toolbar{padding:8px;gap:7px;margin-bottom:5px}
+    .period-settings{margin-top:0;gap:6px}
+    .actions{gap:6px}
+
+    @media(min-width:620px){
+      .wrap{padding-top:9px}
+      header{display:flex;align-items:baseline;gap:10px;padding:2px 4px 7px}
+      header .eyebrow{display:none}
+      header h1{font-size:23px;white-space:nowrap;margin:0}
+      header p:last-child{font-size:10px;white-space:nowrap}
+      .toolbar{grid-template-columns:minmax(0,1fr) auto;align-items:end}
+      .toolbar>div:first-child{display:grid;grid-template-columns:auto minmax(330px,1fr);align-items:end;gap:10px}
+      .settings{height:36px;white-space:nowrap}
+      .period-settings{grid-template-columns:110px 110px auto;align-items:end}
+      .period-setting input{height:36px}
+      .period-settings .btn,.actions .btn{height:36px;min-height:36px}
+    }
+
+    @media(max-width:619px){
+      body{background:linear-gradient(180deg,#12392f 0 118px,var(--paper) 118px)}
+      header{padding:2px 4px 6px}
+      header .eyebrow{font-size:7px}
+      header h1{font-size:18px;margin:0 0 1px}
+      header p:last-child{font-size:8px;line-height:1.2}
+      .toolbar{padding:7px;border-radius:12px;gap:5px}
+      .settings{height:23px;font-size:8px;gap:6px}
+      .switch{width:36px;height:21px}
+      .slider:before{width:15px;height:15px}
+      .switch input:checked+.slider:before{transform:translateX(15px)}
+      .period-settings{grid-template-columns:minmax(0,1fr) minmax(0,1fr) 100px;gap:5px;margin-top:3px}
+      .period-settings .btn{grid-column:auto;height:32px;min-height:32px;padding:2px 5px;font-size:8px}
+      .period-setting label{font-size:7.5px;margin:0 0 2px 1px}
+      .period-setting input{height:32px;border-radius:8px;padding:0 7px;font-size:11px}
+      .actions{grid-template-columns:1fr 1fr !important;gap:5px}
+      .actions .btn{height:32px;min-height:32px;font-size:8px}
+      .jobs-head{margin-top:7px !important}
+    }
+
+    @media(orientation:landscape) and (max-height:520px){
+      body{background:linear-gradient(180deg,#12392f 0 72px,var(--paper) 72px)}
+      .wrap{width:min(100%,900px);padding-top:4px !important}
+      header{display:flex;align-items:baseline;gap:8px;padding:0 4px 4px}
+      header .eyebrow{display:none}
+      header h1{font-size:17px;white-space:nowrap;margin:0}
+      header p:last-child{font-size:8px;white-space:nowrap}
+      .toolbar{grid-template-columns:minmax(0,1fr) auto;padding:6px;align-items:center}
+      .toolbar>div:first-child{display:flex;align-items:center;gap:8px;min-width:0}
+      .settings{height:32px;white-space:nowrap}
+      .period-settings{flex:1;grid-template-columns:minmax(72px,1fr) minmax(72px,1fr) 94px;margin:0}
+      .period-setting label{display:none}
+      .period-setting input,.period-settings .btn,.actions .btn{height:32px;min-height:32px}
+      .actions{grid-template-columns:auto auto !important}
+      .actions .btn{padding:4px 9px;white-space:nowrap}
+      .jobs-head{margin-top:5px !important}
+    }
+  </style>
+  <style>
+    .btn-icon{display:inline-block;font-size:14px;line-height:1}
+    .btn-icon+.btn-text{margin-left:4px}
+    @media(max-width:619px){
+      .toolbar{display:flex !important;align-items:flex-end !important;gap:5px !important;padding:6px !important}
+      .toolbar>div:first-child{display:flex !important;align-items:flex-end !important;gap:5px !important;min-width:0;flex:1}
+      .settings{width:36px;height:32px;flex:none;margin:0}
+      .settings>span:last-child{display:none}
+      .period-settings{display:grid !important;grid-template-columns:64px 64px 34px !important;gap:4px !important;margin:0 !important;flex:none}
+      .period-setting{width:64px}
+      .period-setting label{font-size:6.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+      .period-setting input{width:64px;height:32px !important;font-size:10px;padding:0 5px}
+      .period-settings .btn{width:34px;height:32px !important;min-height:32px;padding:0 !important;border-radius:8px;font-size:0}
+      .actions{display:flex !important;gap:4px !important;flex:none}
+      .actions .btn{width:34px;height:32px !important;min-height:32px;padding:0 !important;border-radius:8px;font-size:0}
+      .btn-icon{font-size:15px;margin:0 !important}
+      .btn-text{display:none}
+    }
+    @media(max-width:360px){
+      .toolbar,.toolbar>div:first-child{gap:3px !important}
+      .period-settings{grid-template-columns:58px 58px 32px !important;gap:3px !important}
+      .period-setting,.period-setting input{width:58px}
+      .period-settings .btn,.actions .btn{width:32px}
+      .actions{gap:3px !important}
+      .settings{width:34px}
+    }
+  </style>
+  <style>
+    .settings-short{display:none}
+    @media(max-width:619px){
+      .toolbar{gap:4px !important}
+      .toolbar>div:first-child{gap:4px !important}
+      .settings{position:relative;width:44px;height:34px;padding-top:11px;justify-content:center}
+      .settings-long{display:none !important}
+      .settings-short{display:block !important;position:absolute;left:0;right:0;top:0;text-align:center;font-size:6.5px;font-weight:900;color:var(--muted);white-space:nowrap}
+      .switch{width:34px;height:21px}
+      .period-settings{grid-template-columns:62px 62px 56px !important;gap:4px !important}
+      .period-setting,.period-setting input{width:62px}
+      .period-settings .btn{width:56px !important;font-size:7.5px !important;font-weight:900;padding:0 2px !important}
+      .actions{gap:4px !important}
+      .actions .btn{font-size:8px !important;font-weight:900;padding:0 3px !important}
+      .actions #addJob{width:52px}
+      .actions #clearAll{width:46px}
+    }
+    @media(max-width:360px){
+      .toolbar,.toolbar>div:first-child,.period-settings,.actions{gap:3px !important}
+      .settings{width:42px}
+      .period-settings{grid-template-columns:54px 54px 54px !important}
+      .period-setting,.period-setting input{width:54px}
+      .period-settings .btn{width:54px !important;font-size:7px !important}
+      .actions #addJob{width:48px}
+      .actions #clearAll{width:42px}
+    }
+  </style>
+  <style>
+    /* ===== Calm visual hierarchy and aligned layout ===== */
+    :root{--paper:#f4f2eb;--card:#fffefa;--line:#d9e2dd;--muted:#657a73;--green:#14735a;--green2:#0c5e48;--shadow:0 6px 20px rgba(20,54,45,.07)}
+    .toolbar{border:1px solid rgba(255,255,255,.85);box-shadow:0 6px 20px rgba(4,40,30,.11)}
+    .period-setting input,.field input{border-color:#d7e0db}
+    .field input[readonly]{background:#edf5f1;color:#185c4a}
+    .job{background:#fffefa;border-color:#e1e6e2;box-shadow:0 3px 12px rgba(20,54,45,.055)}
+    #jobs{gap:7px !important}
+    .jobs-head{color:#5f746d;letter-spacing:.01em}
+
+    /* งานที่เสร็จ: ไฮไลต์สีเท่านั้น ไม่ขีดฆ่าและไม่ลดความชัด */
+    .job.is-done{background:#e7f4ec !important;border-color:#8fc5ad !important;opacity:1 !important;box-shadow:0 3px 14px rgba(20,115,90,.12)}
+    .job.is-done .field input{background:#f8fcfa;text-decoration:none !important;color:#244e42}
+    .job.is-done .field input[readonly]{background:#d9eee3;color:#0c5e48}
+    .job.is-done .done-check{box-shadow:0 0 0 3px rgba(20,115,90,.12)}
+
+    @media(min-width:620px){
+      body{background:linear-gradient(180deg,#123f34 0 184px,var(--paper) 184px)}
+      .wrap{width:min(100%,960px);padding-left:14px;padding-right:14px}
+      header{display:grid;grid-template-columns:auto 1fr;align-items:end;column-gap:12px;padding:3px 5px 9px}
+      header h1{font-size:24px;line-height:1.1}
+      header p:last-child{padding-bottom:2px;color:#c9ddd6}
+      .toolbar{padding:9px 10px;border-radius:15px}
+      .toolbar>div:first-child{grid-template-columns:180px minmax(330px,1fr);gap:12px}
+      .period-settings{grid-template-columns:minmax(105px,1fr) minmax(105px,1fr) minmax(110px,1.1fr)}
+      .actions .btn{min-width:72px}
+      .jobs-head{padding:4px 10px 6px !important;margin-top:6px !important;background:transparent}
+      .job{padding:8px 9px !important;border-radius:12px !important}
+      .field input,.field input[readonly],.row-remove{height:38px !important;min-height:38px !important}
+    }
+
+    @media(max-width:619px){
+      body{background:linear-gradient(180deg,#123f34 0 110px,var(--paper) 110px)}
+      .wrap{padding-left:7px !important;padding-right:7px !important}
+      header{padding-left:5px;padding-right:5px}
+      .toolbar{border-radius:13px;box-shadow:0 5px 16px rgba(4,40,30,.12)}
+      .jobs-head{padding-left:6px !important;padding-right:6px !important;color:#61756e}
+      .job{border-radius:10px !important}
+      .job.is-done{border-left:4px solid var(--green) !important;padding-left:3px !important}
+      .field input,.field input[readonly]{box-shadow:none}
+    }
+
+    @media(orientation:landscape) and (max-height:520px){
+      body{background:linear-gradient(180deg,#123f34 0 70px,var(--paper) 70px)}
+      header{display:flex;padding-bottom:4px}
+      .toolbar{border-radius:11px}
+    }
+  </style>
+  <style>
+    /* ===== Unified green canvas + full-width alignment ===== */
+    html,body{background:#173f34 !important}
+    body{min-height:100vh}
+    .wrap{background:transparent}
+    .jobs-head{background:transparent !important;color:#d3e4de !important}
+    .note{color:#bcd2ca}
+    .empty{color:#c7dbd4}
+
+    @media(min-width:620px){
+      .toolbar{grid-template-columns:minmax(0,1fr) auto !important}
+      .toolbar>div:first-child{grid-template-columns:180px minmax(0,1fr) !important}
+      .period-settings{grid-template-columns:minmax(110px,1fr) minmax(110px,1fr) 120px !important}
+      .jobs-head,.fields{grid-template-columns:38px minmax(140px,1.5fr) minmax(58px,.62fr) minmax(115px,1.25fr) minmax(58px,.62fr) minmax(115px,1.25fr) 36px !important}
+      .job{width:100%}
+    }
+
+    @media(max-width:619px){
+      .toolbar>div:first-child{flex:1 1 auto !important;width:auto !important}
+      .period-settings{flex:1 1 auto !important;grid-template-columns:minmax(54px,1fr) minmax(54px,1fr) 56px !important}
+      .period-setting,.period-setting input{width:100% !important}
+      .actions{flex:0 0 auto !important}
+      .jobs-head,#jobs{width:100%;min-width:0 !important}
+      .jobs-head,.fields{grid-template-columns:28px 78px 34px minmax(0,1fr) 34px minmax(0,1fr) 28px !important;gap:3px !important}
+      .jobs-head{padding-left:6px !important;padding-right:6px !important}
+      .job{width:100%;padding:6px !important}
+      .job.is-done{padding-left:3px !important}
+    }
+
+    @media(max-width:360px){
+      .settings{width:40px}
+      .period-settings{grid-template-columns:minmax(49px,1fr) minmax(49px,1fr) 52px !important}
+      .period-settings .btn{width:52px !important}
+      .actions #addJob{width:46px}
+      .actions #clearAll{width:40px}
+      .jobs-head,.fields{grid-template-columns:26px 72px 32px minmax(0,1fr) 32px minmax(0,1fr) 27px !important}
+    }
+  </style>
 </head>
 <body>
   <main class="wrap">
-    <header><p class="eyebrow">JOB PLANNER</p><h1>คำนวณวันเสร็จงาน</h1><p>วางแผนหลายงาน แล้วคัดลอกข้อมูลไปใช้ต่อได้ทันที</p></header>
+    <header><p class="eyebrow">JOB PLANNER</p><h1>คำนวณวันเสร็จงาน</h1><p>วางแผนหลายงานและติดตามสถานะได้ในหน้าเดียว</p></header>
     <section class="toolbar">
       <div>
-        <label class="settings"><span class="switch"><input id="countStart" type="checkbox" checked><span class="slider"></span></span><span>นับวันที่เริ่มเป็นวันที่ 1</span></label>
-        <div class="global-days" style="margin-top:8px">
-          <label for="allDays">จำนวนวันที่ทำ (ทุก JOB)</label>
-          <input id="allDays" type="number" inputmode="numeric" min="1" step="1" placeholder="เช่น 3">
-          <button class="btn btn-soft" id="applyAllDays">ใช้กับทุก JOB</button>
+        <label class="settings"><span class="switch"><input id="countStart" type="checkbox" checked><span class="slider"></span></span><span class="settings-long">นับวันที่เริ่มเป็นวันที่ 1</span><span class="settings-short">นับวันเริ่ม</span></label>
+        <div class="period-settings">
+          <div class="period-setting"><label for="allDays1">จำนวนวันช่วง 1</label><input id="allDays1" type="number" inputmode="numeric" min="1" step="1" placeholder="เช่น 3"></div>
+          <div class="period-setting"><label for="allDays2">จำนวนวันช่วง 2</label><input id="allDays2" type="number" inputmode="numeric" min="1" step="1" placeholder="เช่น 7"></div>
+          <button class="btn btn-soft" id="applyAllDays" aria-label="ใช้จำนวนวันกับทุกรายการ" title="ใช้กับทุกรายการ">ใช้ทุกงาน</button>
         </div>
       </div>
-      <div class="actions"><button class="btn btn-primary" id="addJob">＋ เพิ่ม JOB</button><button class="btn btn-soft" id="copyAll">คัดลอกทั้งหมด</button></div>
+      <div class="actions"><button class="btn btn-primary" id="addJob" aria-label="เพิ่มรายการ" title="เพิ่มรายการ">+ งาน</button><button class="btn btn-clear" id="clearAll" aria-label="ล้างข้อมูล" title="ล้างข้อมูล">ล้าง</button></div>
     </section>
     <div class="jobs-head" aria-hidden="true">
-      <span>เลข JOB</span>
-      <span>วันเริ่ม</span>
-      <span>จำนวนวัน</span>
-      <span>วันเสร็จ</span>
+      <span>เสร็จ</span>
+      <span>เริ่ม</span>
+      <span>วัน 1</span>
+      <span>เสร็จ 1</span>
+      <span>วัน 2</span>
+      <span>เสร็จ 2</span>
       <span></span>
     </div>
     <section id="jobs" aria-live="polite"></section>
-    <div id="empty" class="empty">ยังไม่มีรายการ กด “เพิ่ม JOB” เพื่อเริ่มต้น</div>
+    <div id="empty" class="empty">ยังไม่มีรายการ กด “เพิ่มรายการ” เพื่อเริ่มต้น</div>
     <p class="note">คำนวณตามวันปฏิทิน รวมวันเสาร์–อาทิตย์<br>ข้อมูลจะถูกบันทึกไว้เฉพาะในอุปกรณ์นี้</p>
   </main>
   <div class="toast" id="toast" role="status"></div>
   <template id="jobTemplate">
     <article class="job">
       <div class="fields">
-        <div class="field"><div class="input-row"><input class="job-no" type="text" inputmode="text" placeholder="เช่น JOB-2501"><button class="field-copy" type="button" data-copy="job-no" aria-label="คัดลอกเลข JOB" title="คัดลอก">⧉</button></div></div>
-        <div class="field"><div class="input-row"><input class="start" type="date"><button class="field-copy" type="button" data-copy="start" aria-label="คัดลอกวันเริ่ม" title="คัดลอก">⧉</button></div></div>
-        <div class="field"><div class="input-row"><input class="days" type="number" inputmode="numeric" min="1" step="1" placeholder="0"></div></div>
-        <div class="field"><div class="input-row"><input class="finish" type="text" readonly placeholder="รอข้อมูล"><button class="field-copy" type="button" data-copy="finish" aria-label="คัดลอกวันเสร็จ" title="คัดลอก">⧉</button></div></div>
+        <div class="done-wrap"><input class="done-check" type="checkbox" aria-label="ทำงานนี้เสร็จแล้ว" title="ทำแล้ว"></div>
+        <div class="field"><span class="field-name">วันเริ่ม</span><div class="input-row"><input class="start" type="date"></div></div>
+        <div class="field"><span class="field-name">จำนวนวัน 1</span><div class="input-row"><input class="days-1" type="number" inputmode="numeric" min="1" step="1" placeholder="0"></div></div>
+        <div class="field"><span class="field-name">เสร็จ 1</span><div class="input-row"><input class="finish-1" type="text" readonly placeholder="รอข้อมูล"></div></div>
+        <div class="field"><span class="field-name">จำนวนวัน 2</span><div class="input-row"><input class="days-2" type="number" inputmode="numeric" min="1" step="1" placeholder="0"></div></div>
+        <div class="field"><span class="field-name">เสร็จ 2</span><div class="input-row"><input class="finish-2" type="text" readonly placeholder="รอข้อมูล"></div></div>
         
         <button class="remove row-remove" type="button" aria-label="ลบรายการ" title="ลบรายการ">×</button>
       </div>
     </article>
   </template>
   <script>
-    const jobsEl=document.querySelector('#jobs'),tpl=document.querySelector('#jobTemplate'),toast=document.querySelector('#toast'),countStart=document.querySelector('#countStart'),allDays=document.querySelector('#allDays');
+    const jobsEl=document.querySelector('#jobs'),tpl=document.querySelector('#jobTemplate'),toast=document.querySelector('#toast'),countStart=document.querySelector('#countStart'),allDays1=document.querySelector('#allDays1'),allDays2=document.querySelector('#allDays2');
     const pad=n=>String(n).padStart(2,'0');
     const dateText=value=>{if(!value)return '';const [y,m,d]=value.split('-').map(Number);return `${pad(d)}/${pad(m)}/${y}`};
     const finishDate=(start,days)=>{if(!start||!days||days<1)return '';const [y,m,d]=start.split('-').map(Number),dt=new Date(y,m-1,d);dt.setDate(dt.getDate()+Number(days)-(countStart.checked?1:0));return `${pad(dt.getDate())}/${pad(dt.getMonth()+1)}/${dt.getFullYear()}`};
     let toastTimer=null;function flash(msg){clearTimeout(toastTimer);toast.classList.remove('show');toast.textContent=msg;requestAnimationFrame(()=>{toast.classList.add('show');toastTimer=setTimeout(()=>toast.classList.remove('show'),1200)})}
-    async function copy(text){if(!text)return flash('ยังไม่มีข้อมูลให้คัดลอก');try{await navigator.clipboard.writeText(text)}catch{const t=document.createElement('textarea');t.value=text;document.body.append(t);t.select();document.execCommand('copy');t.remove()}flash('คัดลอกแล้ว')}
-    function data(){return [...document.querySelectorAll('.job')].map(el=>({job:el.querySelector('.job-no').value,start:el.querySelector('.start').value,days:el.querySelector('.days').value}))}
-    function save(){localStorage.setItem('job-planner-v1',JSON.stringify({countStart:countStart.checked,allDays:allDays.value,jobs:data()}))}
-    function recalc(el){el.querySelector('.finish').value=finishDate(el.querySelector('.start').value,el.querySelector('.days').value)}
+    function data(){return [...document.querySelectorAll('.job')].map(el=>({start:el.querySelector('.start').value,days1:el.querySelector('.days-1').value,days2:el.querySelector('.days-2').value,done:el.querySelector('.done-check').checked}))}
+    function save(){localStorage.setItem('job-planner-v1',JSON.stringify({countStart:countStart.checked,allDays1:allDays1.value,allDays2:allDays2.value,jobs:data()}))}
+    function recalc(el){
+      const start=el.querySelector('.start').value,days1=Number(el.querySelector('.days-1').value),days2=Number(el.querySelector('.days-2').value);
+      el.querySelector('.finish-1').value=finishDate(start,days1);
+      el.querySelector('.finish-2').value=start&&days1>0&&days2>0?finishDate(start,days1+days2):'';
+    }
     function renumber(){document.querySelector('#empty').classList.toggle('show',!jobsEl.children.length)}
-    function rowText(el){const j=el.querySelector('.job-no').value||'-',s=dateText(el.querySelector('.start').value)||'-',d=el.querySelector('.days').value||'-',f=el.querySelector('.finish').value||'-';return `${j} เริ่ม ${s}-${f} (${d} วัน)`}
-    function addJob(values={}){const el=tpl.content.firstElementChild.cloneNode(true);el.querySelector('.job-no').value=values.job||'';el.querySelector('.start').value=values.start||'';el.querySelector('.days').value=values.days||'';
+    function addJob(values={}){const el=tpl.content.firstElementChild.cloneNode(true);el.querySelector('.start').value=values.start||'';el.querySelector('.days-1').value=values.days1||values.days||'';el.querySelector('.days-2').value=values.days2||'';el.querySelector('.done-check').checked=values.done===true;el.classList.toggle('is-done',values.done===true);
       el.addEventListener('input',()=>{recalc(el);save()});
+      el.querySelector('.done-check').addEventListener('change',e=>{el.classList.toggle('is-done',e.target.checked);save()});
       const removeBtn=el.querySelector('.remove'); if(removeBtn) removeBtn.onclick=()=>{el.remove();renumber();save()};
-      el.querySelectorAll('.field-copy').forEach(btn=>{
-        btn.onclick=(e)=>{
-          e.preventDefault();e.stopPropagation();
-          const cls=btn.dataset.copy,input=el.querySelector('.'+cls);
-          copy(cls==='start'?dateText(input.value):input.value);
-        };
-      });
       jobsEl.append(el);recalc(el);renumber();save();return el}
-    document.querySelector('#addJob').onclick=()=>{const el=addJob();el.querySelector('.job-no').focus()};
-    document.querySelector('#copyAll').onclick=()=>{const rows=[...document.querySelectorAll('.job')];copy(rows.map(rowText).join('\n\n'))};
+    document.querySelector('#addJob').onclick=()=>{const el=addJob();el.querySelector('.start').focus()};
     document.querySelector('#applyAllDays').onclick=()=>{
-      const v=Number(allDays.value);
-      if(!Number.isInteger(v)||v<1)return flash('กรุณาใส่จำนวนวันตั้งแต่ 1 ขึ้นไป');
-      document.querySelectorAll('.job').forEach(el=>{el.querySelector('.days').value=v;recalc(el)});
-      save();flash(`ตั้ง ${v} วันให้ทุก JOB แล้ว`);
+      const v1=Number(allDays1.value),v2=Number(allDays2.value);
+      if(!Number.isInteger(v1)||v1<1||!Number.isInteger(v2)||v2<1)return flash('กรุณาใส่จำนวนวันทั้ง 2 ช่วง');
+      document.querySelectorAll('.job').forEach(el=>{el.querySelector('.days-1').value=v1;el.querySelector('.days-2').value=v2;recalc(el)});
+      save();flash(`ตั้งช่วง 1 = ${v1} วัน และช่วง 2 = ${v2} วันแล้ว`);
     };
-    allDays.addEventListener('keydown',e=>{if(e.key==='Enter')document.querySelector('#applyAllDays').click()});
-    allDays.addEventListener('input',save);
+    [allDays1,allDays2].forEach(input=>{input.addEventListener('keydown',e=>{if(e.key==='Enter')document.querySelector('#applyAllDays').click()});input.addEventListener('input',save)});
+    document.querySelector('#clearAll').onclick=()=>{if(!confirm('ล้างข้อมูลทั้งหมดใช่ไหม?'))return;localStorage.removeItem('job-planner-v1');jobsEl.replaceChildren();allDays1.value='';allDays2.value='';countStart.checked=true;addJob({start:new Date().toLocaleDateString('en-CA')});flash('ล้างข้อมูลแล้ว')};
     countStart.onchange=()=>{document.querySelectorAll('.job').forEach(recalc);save()};
-    try{const old=JSON.parse(localStorage.getItem('job-planner-v1'));if(old){countStart.checked=old.countStart!==false;allDays.value=old.allDays||'';(old.jobs||[]).forEach(addJob)}}catch{}
+    try{const old=JSON.parse(localStorage.getItem('job-planner-v1'));if(old){countStart.checked=old.countStart!==false;allDays1.value=old.allDays1||old.allDays||'';allDays2.value=old.allDays2||'';(old.jobs||[]).forEach(addJob)}}catch{}
     if(!jobsEl.children.length)addJob({start:new Date().toLocaleDateString('en-CA')});
   </script>
 </body>
