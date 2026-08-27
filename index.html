@@ -875,6 +875,33 @@
       .jobs-head,.fields{grid-template-columns:26px 72px 32px minmax(0,1fr) 32px minmax(0,1fr) 27px !important}
     }
   </style>
+  <style>
+    /* สถานะเสร็จต้องเห็นชัดทันที */
+    .job.is-done{
+      background:#bfe5cf !important;
+      border:2px solid #27835f !important;
+      box-shadow:0 4px 16px rgba(5,78,54,.24) !important;
+    }
+    .job.is-done .field input{
+      background:#f4fbf7 !important;
+      border-color:#78b99b !important;
+      color:#164d3c !important;
+    }
+    .job.is-done .field input[readonly]{
+      background:#94d0ae !important;
+      border-color:#4a9d77 !important;
+      color:#073f2d !important;
+      font-weight:900 !important;
+    }
+    .job.is-done .done-check{
+      background:#08734f !important;
+      border-color:#075d42 !important;
+      box-shadow:0 0 0 3px rgba(8,115,79,.18) !important;
+    }
+    @media(max-width:619px){
+      .job.is-done{border-left:6px solid #08734f !important;padding-left:1px !important}
+    }
+  </style>
 </head>
 <body>
   <main class="wrap">
